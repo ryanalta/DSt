@@ -1,7 +1,7 @@
-/* DSt: 
+/* DSt:
    a simple, agnostic DOM Storage library.
    http://github.com/gamache/DSt
-    
+
    AUTHORSHIP:
    copyright 2010  pete gamache  gamache!@#$!@#gmail.com
    licensed under the MIT License and/or the GPL version 2
@@ -24,7 +24,7 @@
     Element IDs may always be given in place of the elements themselves.
     Values handled by DSt.get/DSt.set can be anything JSON-encodable.
 
-    You may use jQuery.DSt or $.DSt instead of DST if you're using 
+    You may use jQuery.DSt or $.DSt instead of DST if you're using
       jquery.dst.js.
 */
 
@@ -36,17 +36,17 @@ var DSt                   // <-- to change the global namespace, do it here
 
   version: 0.002005,
 
-  get: function (key) { 
+  get: function (key) {
     var value = localStorage.getItem(key);
-    if (value === undefined || value === null) 
+    if (value === undefined || value === null)
       value = 'null';
-    else 
+    else
       value = value.toString();
     return JSON.parse(value);
   },
- 
-  set: function (key, value) { 
-    return localStorage.setItem(key, JSON.stringify(value)); 
+
+  set: function (key, value) {
+    return localStorage.setItem(key, JSON.stringify(value));
   },
 
 
@@ -55,7 +55,6 @@ var DSt                   // <-- to change the global namespace, do it here
     if (!elt || elt.name == '') return this; // bail on nameless/missing elt
 
     var key = DSt._form_elt_key(elt);
-
     if (elt.type == 'checkbox') {
       DSt.set(key, elt.checked ? 1 : 0);
     }
@@ -72,15 +71,19 @@ var DSt                   // <-- to change the global namespace, do it here
   recall: function (elt) {
     if (typeof(elt) == 'string') elt = document.getElementById(elt);
     if (!elt || elt.name == '') return this; // bail on nameless/missing elt
-    
+
     var key = DSt._form_elt_key(elt);
     var stored_value = DSt.get(key);
 
     if (elt.type == 'checkbox') {
       elt.checked = !!stored_value;
+	    // hack
+	    $(elt).trigger('change');
     }
     else if (elt.type == 'radio') {
       if (elt.value == stored_value) elt.checked = true;
+	    // hack
+	    $(elt).trigger('change');
     }
     else {
       elt.value = stored_value || '';
@@ -92,7 +95,7 @@ var DSt                   // <-- to change the global namespace, do it here
   // returns a key string, based on form name and form element name
   _form_elt_key: function (form_elt) {
     if (form_elt.name.endsWith('[]')) {
-       return  '_form_' + form_elt.form.name + '_field_' + form_elt.name + '_' + form_elt.value;
+      return  '_form_' + form_elt.form.name + '_field_' + form_elt.name + '_' + form_elt.value;
     } else {
       return  '_form_' + form_elt.form.name + '_field_' + form_elt.name;
     }
@@ -101,7 +104,7 @@ var DSt                   // <-- to change the global namespace, do it here
   // returns the selected value of a group of radio buttons, or null
   // if none are selected
   _radio_value: function (radio_elt) {
-    if (typeof(radio_elt)=='string') 
+    if (typeof(radio_elt)=='string')
       radio_elt=document.getElementById(radio_elt);
 
     var radios = radio_elt.form.elements[radio_elt.name];
@@ -129,17 +132,17 @@ var DSt                   // <-- to change the global namespace, do it here
     for (var i=0; i<nelts; i++) {
       var node = form.elements[i];
       if (node.tagName == 'TEXTAREA' ||
-          node.tagName == 'INPUT'    && 
+          node.tagName == 'INPUT'    &&
              node.type != 'file'     &&
              node.type != 'button'   &&
              node.type != 'image'    &&
-             node.type != 'password' && 
+             node.type != 'password' &&
              node.type != 'submit'   &&
              node.type != 'reset'       ) { fn(node); }
     }
     return this;
   },
-  
+
 
 
   // _storage_types() returns a string containing every supported
@@ -149,7 +152,7 @@ var DSt                   // <-- to change the global namespace, do it here
     for (var i in window) {
       if (i=='sessionStorage' || i=='globalStorage' ||
           i=='localStorage'   || i=='openDatabase'     )  {
-        st += st ? (' '+i) : i; 
+        st += st ? (' '+i) : i;
       }
     }
     return st;
