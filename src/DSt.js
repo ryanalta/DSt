@@ -91,7 +91,11 @@ var DSt                   // <-- to change the global namespace, do it here
 
   // returns a key string, based on form name and form element name
   _form_elt_key: function (form_elt) {
-    return  '_form_' + form_elt.form.name + '_field_' + form_elt.name;
+    if (form_elt.name.endsWith('[]')) {
+       return  '_form_' + form_elt.form.name + '_field_' + form_elt.name + '_' + form_elt.value;
+    } else {
+      return  '_form_' + form_elt.form.name + '_field_' + form_elt.name;
+    }
   },
 
   // returns the selected value of a group of radio buttons, or null
